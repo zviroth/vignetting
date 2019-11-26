@@ -6,7 +6,7 @@ contrasts = [1 100];
 interpMethod = 'linear';
 normResp = 1;
 numPhases=1;
-numFreqs = 15;
+numFreqs = 10;
 freqs = linspace(1,150,numFreqs);
 % freqs = logspace(0,2.1,numFreqs);
 % freqs= [10 16 24];
@@ -21,7 +21,7 @@ numOri = 4;
 gratingOrientations = linspace(0, pi, numOri+1);
 gratingOrientations = gratingOrientations(1:numOri);
 
-rfSize = 10;
+rfSize = 15;
 
 rfY = (gratingSize+1)/2; rfX= 58+(gratingSize+1)/2;%bottom
 rfY = (gratingSize+1)/2; rfX= (gratingSize+1)/2;%bottom
@@ -30,8 +30,8 @@ rfY = (gratingSize+1)/2; rfX= (gratingSize+1)/2;%bottom
 
 % extract the response from RF
 rf = mkDisc([gratingSize gratingSize], rfSize, [rfX rfY]);
-        
-        
+
+
 % construct quad frequency filters
 numOrientations = 4;
 bandwidth = 1;
@@ -41,9 +41,9 @@ numLevels = maxLevel(dims,bandwidth);
 
 
 
-    % initizlize grating
-    gratings = [];
-    
+% initizlize grating
+gratings = [];
+
 for icontrast=1:length(contrasts)
     contrast = contrasts(icontrast);
     % loop over aperture sizes
@@ -83,7 +83,7 @@ for icontrast=1:length(contrasts)
                     sumBandsContrastOriFreqPhase{iLev}(:,:,icontrast,iori,ifreq,iphase) = temp;
                 end
                 
-            end       
+            end
         end
     end
 end
@@ -107,7 +107,7 @@ end
 
 %get RF response for each orientation, contrast, and frequency
 for icontrast=1:length(contrasts)
-
+    
     %frequency tuning per contrast
     temp = squeeze(sumBandsContrastOriFreq{whichLev}(:,:,icontrast,:,:,:)) .* repmat(rf, [1 1 numOri length(freqs)]);
     temp(temp == 0) = NaN;
@@ -116,7 +116,7 @@ for icontrast=1:length(contrasts)
     temp(temp == 0) = NaN;
     v1Freq(icontrast,:) = squeeze(nanmean(nanmean(nanmean(temp,1),2),3));
 end
-    
+
 
 %%
 interpFactor = 10;
@@ -132,7 +132,7 @@ end
 rows=length(contrasts);
 cols=4;
 for icontrast=1:length(contrasts)
-
+    
     [fwhmx, halfMax, index1, index2] = findFWHM(interpFreqs,interpRfFreq(icontrast,:));
     disp(sprintf('RF: Contrast=%i: FWHM=%i', contrasts(icontrast), rad2deg(fwhmx)));
     
@@ -151,10 +151,10 @@ for icontrast=1:length(contrasts)
     hold on
     colormap(gray);
     caxis([-1 1])
-
+    
     %RF frequency tuning
     subplot(rows,cols,2 + (icontrast-1)*cols); cla
-%     plot(interpFreqs, interpRfFreq(icontrast,:), 'k.-', 'markerfacecolor', 'b', 'markersize',5);
+    %     plot(interpFreqs, interpRfFreq(icontrast,:), 'k.-', 'markerfacecolor', 'b', 'markersize',5);
     semilogx(interpFreqs, interpRfFreq(icontrast,:), 'k.-', 'markerfacecolor', 'b', 'markersize',5);
     line(interpFreqs([index1 index2]), [halfMax halfMax], 'color', 'red', 'linewidth', 2);
     xaxis([interpFreqs(1) interpFreqs(end)]);
@@ -164,6 +164,12 @@ for icontrast=1:length(contrasts)
     ylabel('Simulated response amplitude');
     drawPublishAxis('xTick', [interpFreqs(1) interpFreqs(end)],'yLabelOffset', -6/64,'xLabelOffset', -6/64,'labelFontSize',10);
     
+    if icontrast==1
+        drawPublishAxis('xTick', [interpFreqs(1) interpFreqs(end)],'yLabelOffset', -6/64,'xLabelOffset', -6/64,'labelFontSize',10,'titleStr','white RF');
+    else
+        drawPublishAxis('xTick', [interpFreqs(1) interpFreqs(end)],'yLabelOffset', -6/64,'xLabelOffset', -6/64,'labelFontSize',10);
+    end
+    
     
     
     [fwhmx, halfMax, index1, index2] = findFWHM(interpFreqs,interpV1Freq(icontrast,:));
@@ -171,18 +177,24 @@ for icontrast=1:length(contrasts)
     
     
     
-        %V1 frequency tuning
+    %V1 frequency tuning
     subplot(rows,cols,3 + (icontrast-1)*cols); cla
-%     plot(interpFreqs, interpV1Freq(icontrast,:), 'k.-', 'markerfacecolor', 'b', 'markersize',5);
-semilogx(interpFreqs, interpV1Freq(icontrast,:), 'k.-', 'markerfacecolor', 'b', 'markersize',5);
+    %     plot(interpFreqs, interpV1Freq(icontrast,:), 'k.-', 'markerfacecolor', 'b', 'markersize',5);
+    semilogx(interpFreqs, interpV1Freq(icontrast,:), 'k.-', 'markerfacecolor', 'b', 'markersize',5);
     line(interpFreqs([index1 index2]), [halfMax halfMax], 'color', 'red', 'linewidth', 2);
-   xaxis([interpFreqs(1) interpFreqs(end)]);
+    xaxis([interpFreqs(1) interpFreqs(end)]);
     %yaxis([-100 100]);
     axis square
     xlabel('Stimulus frequency');
     ylabel('Simulated response amplitude');
+    
     drawPublishAxis('xTick', [freqs(1) freqs(end)],'yLabelOffset', -6/64,'xLabelOffset', -8/64,'labelFontSize',10);
-
+    
+    if icontrast==1
+        drawPublishAxis('xTick', [freqs(1) freqs(end)],'yLabelOffset', -6/64,'xLabelOffset', -8/64,'labelFontSize',10,'titleStr','entire FOV');
+    else
+        drawPublishAxis('xTick', [freqs(1) freqs(end)],'yLabelOffset', -6/64,'xLabelOffset', -8/64,'labelFontSize',10);
+    end
 end
 set(gcf,'position',[2 5 35 15]);
 %
@@ -218,5 +230,5 @@ set(gcf,'position',[100 300 1100 250]);
 % index2 = find(Y >= halfMax, 1, 'last');
 % fwhm = index2-index1 + 1; % FWHM in indexes.
 % fwhmx = X(index2) - X(index1);
-% 
+%
 % end
