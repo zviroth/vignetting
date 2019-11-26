@@ -4,18 +4,19 @@ clear all
 contrasts = [1 100];
 % contrasts = [20 100];
 interpMethod = 'linear';
-normResp = 1;
+normResp = 0;
 numPhases=1;
-freqs = linspace(1,100,3);
+numFreqs = 2;
+freqs = linspace(1,100,numFreqs);
 % freqs= [10 16 24];
 phases = linspace(0,pi,numPhases+1);
 phases = phases(1:end-1);
-whichLev = 5;
+whichLev = 4;
 
 % rfSize = 90;
 
 % create the stimulus
-gratingSize = 257;
+gratingSize = 256;
 apertureSize = 64;
 % apertureSize = 4;
 % gratingFreq = 16;
@@ -23,14 +24,19 @@ gratingDirection = pi;
 numOri = 16;
 gratingOrientations = linspace(0, pi, numOri);
 
-rfSize = 20;
-rfY = (gratingSize+1)/2; rfX= 40+(gratingSize+1)/2;
+rfSize = 15;
+
+rfY = (gratingSize+1)/2; rfX= 58+(gratingSize+1)/2;%bottom
+rfY = (gratingSize+1)/2; rfX= (gratingSize+1)/2;%bottom
+% rfY = 58 + (gratingSize+1)/2; rfX= (gratingSize+1)/2;
+
+
 % extract the response from RF
 rf = mkDisc([gratingSize gratingSize], rfSize, [rfX rfY]);
         
         
 % construct quad frequency filters
-numOrientations = 6;
+numOrientations = 4;
 bandwidth = 1;
 dims = [gratingSize gratingSize];
 numLevels = maxLevel(dims,bandwidth);
@@ -206,19 +212,24 @@ for icontrast=1:length(contrasts)
     ylabel('Simulated response amplitude');
     drawPublishAxis('xTick', [interpFreqs(1) interpFreqs(end)],'yLabelOffset', -18/64,'xLabelOffset', -8/64,'labelFontSize',10);
 end
-
+set(gcf,'position',[2 5 35 15]);
 %%
 rows=1;
 cols=3;
 figure(2); clf
 subplot(rows,cols,1)
 plot(interpGratingOrientations, zscore(interpRfOri,0,2), 'markersize',5);
+title('z-scored RF orientation tuning');
+xlabel('stimulus orientation');
 subplot(rows,cols,2)
 % plot(gratingOrientations, zscore(v1Data,0,2), 'markersize',5);
 plot(gratingOrientations, zscore(v1Ori,0,2), 'markersize',5);
-
+title('z-scored V1 orientation tuning');
+xlabel('stimulus orientation');
 subplot(rows,cols,3)
 plot(interpFreqs, zscore(interpRfFreq,0,2), 'markersize',5);
+title('z-scored RF SF tuning');
+xlabel('spatial frequency');
 %     plot(interpGratingOrientations, interpData, 'k.-', 'markerfacecolor', 'b', 'markersize',5);
 % line(interpGratingOrientations([index1 index2]), [halfMax halfMax], 'color', 'red', 'linewidth', 2);
-
+set(gcf,'position',[100 300 1100 250]);
