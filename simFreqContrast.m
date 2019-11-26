@@ -6,10 +6,14 @@ contrasts = [1 100];
 interpMethod = 'linear';
 normResp = 1;
 numPhases=1;
-numFreqs = 10;
+numFreqs = 20;
+
 freqs = linspace(1,150,numFreqs);
-% freqs = logspace(0,2.1,numFreqs);
-% freqs= [10 16 24];
+freqs = logspace(-1.5,1,numFreqs);
+freqs = logspace(-1.5,-0.5,numFreqs);
+freqs = logspace(-1.8,-0.8,numFreqs);
+freqs = logspace(-2.3,-1.3,numFreqs);
+
 phases = linspace(0,pi,numPhases+1);
 phases = phases(1:end-1);
 
@@ -53,7 +57,9 @@ for icontrast=1:length(contrasts)
         for ifreq=1:length(freqs)
             for iphase = 1:numPhases
                 %         gratings(icontrast,:,:,iOri,ifreq) = outerAperture .* mkSine(gratingSize, gratingFreq, gratingOrientations(iOri), contrast/100);
-                gratings(:,:,icontrast,iori,ifreq,iphase) = outerAperture .* mkSine(gratingSize, freqs(ifreq), gratingOrientations(iori), contrast/100,phases(iphase));
+                %mkSine uses freq as cycle length in pixels!!
+%                 gratings(:,:,icontrast,iori,ifreq,iphase) = outerAperture .* mkSine(gratingSize, freqs(ifreq), gratingOrientations(iori), contrast/100,phases(iphase));
+                gratings(:,:,icontrast,iori,ifreq,iphase) = outerAperture .* mkSine(gratingSize, 1/freqs(ifreq), gratingOrientations(iori), contrast/100,phases(iphase));
             end
         end
     end
@@ -100,7 +106,7 @@ for iLev = 1:numLevels
     levMax(iLev) = max(sumBandsContrastOriFreq{iLev}(:));
 end
 [maxVal,whichLev] = max(levMean); whichLev
-[maxVal,whichLev] = max(levMax); whichLev
+% [maxVal,whichLev] = max(levMax); whichLev
 
 %%
 %now focusing only on ONE LEVEL
