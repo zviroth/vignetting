@@ -20,11 +20,12 @@ apertureSize = 64;
 gratingFreq = 60;
 gratingDirection = pi;
 numOri = 16;
+numOri = 25;
 gratingOrientations = linspace(0, pi, numOri);
 
 rfSize = 15;
 
-rfY = (gratingSize+1)/2; rfX= 50+(gratingSize+1)/2;%bottom
+% rfY = (gratingSize+1)/2; rfX= 58+(gratingSize+1)/2;%bottom
 % rfY = (gratingSize+1)/2; rfX= (gratingSize+1)/2;%center?
 rfY = 58 + (gratingSize+1)/2; rfX= (gratingSize+1)/2;
 
@@ -182,18 +183,24 @@ end
 
 set(gcf,'position',[2 5 35 15]);
 %%
+percChangeRf = (interpRfOri - mean(interpRfOri,2))./mean(interpRfOri,2);
+percChangeV1 = (v1Ori - mean(v1Ori,2))./mean(v1Ori,2);
 rows=1;
 cols=2;
 figure(2); clf
 subplot(rows,cols,1)
-plot(interpGratingOrientations, zscore(interpRfOri,0,2), 'markersize',5);
-title('z-scored RF orientation tuning');
+
+plot(interpGratingOrientations, percChangeRf, 'markersize',5);
+title('RF orientation tuning');
 xlabel('stimulus orientation');
+ylabel('% change');
+legend('low contrast','high contrast');
 subplot(rows,cols,2)
 % plot(gratingOrientations, zscore(v1Data,0,2), 'markersize',5);
 % plot(gratingOrientations, zscore(v1Ori,0,2), 'markersize',5);
-plot(gratingOrientations, v1Ori, 'markersize',5);
-title('z-scored V1 orientation tuning');
+plot(gratingOrientations, percChangeV1, 'markersize',5);
+title('V1 orientation tuning');
 xlabel('stimulus orientation');
-
-set(gcf,'position',[100 300 1100 250]);
+ylabel('% change');
+% legend('low contrast','high contrast');
+set(gcf,'position',[100 300 800 250]);

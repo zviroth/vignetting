@@ -27,8 +27,9 @@ gratingOrientations = gratingOrientations(1:numOri);
 
 rfSize = 15;
 
-rfY = (gratingSize+1)/2; rfX= 58+(gratingSize+1)/2;%bottom
+% rfY = (gratingSize+1)/2; rfX= 58+(gratingSize+1)/2;%bottom
 rfY = (gratingSize+1)/2; rfX= (gratingSize+1)/2;%bottom
+
 % rfY = 58 + (gratingSize+1)/2; rfX= (gratingSize+1)/2;
 
 
@@ -136,7 +137,7 @@ if length(contrasts)==1
 end
 
 rows=length(contrasts);
-cols=4;
+cols=3;
 for icontrast=1:length(contrasts)
     
     [fwhmx, halfMax, index1, index2] = findFWHM(interpFreqs,interpRfFreq(icontrast,:));
@@ -203,26 +204,30 @@ for icontrast=1:length(contrasts)
     end
 end
 set(gcf,'position',[2 5 35 15]);
-%
+%%
+percChangeRf = (interpRfFreq - mean(interpRfFreq,2))./mean(interpRfFreq,2);
+percChangeV1 = (interpV1Freq - mean(interpV1Freq,2))./mean(interpV1Freq,2);
 rows=1;
-cols=3;
+cols=2;
 figure(2); clf
 
 subplot(rows,cols,1)
 % plot(interpFreqs, zscore(interpRfFreq,0,2), 'markersize',5);
-semilogx(interpFreqs, zscore(interpRfFreq,0,2), 'markersize',5);
+semilogx(interpFreqs, percChangeRf, 'markersize',5);
 title('z-scored RF SF tuning');
 xlabel('spatial frequency');
 
 subplot(rows,cols,2)
 % plot(interpFreqs, zscore(interpV1Freq,0,2), 'markersize',5);
-semilogx(interpFreqs, zscore(interpV1Freq,0,2), 'markersize',5);
+semilogx(interpFreqs, percChangeV1, 'markersize',5);
 title('z-scored v1 SF tuning');
 xlabel('spatial frequency');
+ylabel('% change');
+legend('low contrast','high contrast');
 
 %     plot(interpGratingOrientations, interpData, 'k.-', 'markerfacecolor', 'b', 'markersize',5);
 % line(interpGratingOrientations([index1 index2]), [halfMax halfMax], 'color', 'red', 'linewidth', 2);
-set(gcf,'position',[100 300 1100 250]);
+set(gcf,'position',[100 300 800 250]);
 
 
 
